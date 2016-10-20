@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding:utf8 -*-
 import argparse, subprocess, json, os, urllib2, sys, base64, binascii, time, \
     hashlib, tempfile, re, copy, textwrap
 
@@ -175,6 +176,16 @@ openssl dgst -sha256 -sign user.key -out {3} {4}
 
     stdout = sys.stdout
     sys.stdout = sys.stderr
+    raw_input('I am about to run this for you ¿ok?...')
+    sys.stdout = stdout
+
+    subprocess.call("openssl dgst -sha256 -sign user.key -out {0} {1}".format(reg_file_sig.name, reg_file_name).split(" "))
+    for i in ids:
+        subprocess.call("openssl dgst -sha256 -sign user.key -out {0} {1}".format(i['sig_name'], i['file_name']).split(' '))
+    subprocess.call("openssl dgst -sha256 -sign user.key -out {0} {1}".format(csr_file_sig_name, csr_file_name).split(' '))
+
+    stdout = sys.stdout
+    sys.stdout = sys.stderr
     raw_input("Press Enter when you've run the above commands in a new terminal window...")
     sys.stdout = stdout
 
@@ -282,6 +293,14 @@ STEP 3: You need to sign some more files (replace 'user.key' with your user priv
 
     stdout = sys.stdout
     sys.stdout = sys.stderr
+    raw_input('I am about to run this for you ¿ok?...')
+    sys.stdout = stdout
+
+    for i in tests:
+        subprocess.call("openssl dgst -sha256 -sign user.key -out {0} {1}".format(i['sig_name'], i['file_name']).split(' '))
+
+    stdout = sys.stdout
+    sys.stdout = sys.stderr
     raw_input("Press Enter when you've run the above commands in a new terminal window...")
     sys.stdout = stdout
 
@@ -307,8 +326,12 @@ Notes:
 
 """.format(n + 4, i['domain'], responses[n]['uri'], responses[n]['data']))
 
+            with open(responses[n]['uri'].split('/')[-1], 'w') as tokenfile:
+                tokenfile.write(responses[n]['data'])
+
             stdout = sys.stdout
             sys.stdout = sys.stderr
+            print('I created the file for you, upload it to your server')
             raw_input("Press Enter when you've got the file hosted on your server...")
             sys.stdout = stdout
         else:
