@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 import argparse, subprocess, json, os, urllib2, sys, base64, binascii, time, \
     hashlib, tempfile, re, copy, textwrap
 
